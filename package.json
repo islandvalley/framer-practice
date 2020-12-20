@@ -7,10 +7,12 @@
   },
   "dependencies": {
     "framer": "^1.2.11",
+    "framer-motion": "^3.1.1",
     "next": "^10.0.3",
     "prettier": "^2.2.1",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "stylelint": "^13.8.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.14",

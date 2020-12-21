@@ -2,26 +2,6 @@ import React from 'react'
 import { useRef, useEffect } from 'react'
 import { motion, useCycle } from 'framer-motion'
 
-const sidebar = {
-  open: (height = 1000) => ({
-    clipPath: `circle(${height * 2 + 200}px at 40px 40px)`,
-    transition: {
-      type: 'spring',
-      stiffness: 20,
-      restDelta: 2,
-    },
-  }),
-  closed: {
-    clipPath: 'circle(30px at 40px 40px)',
-    transition: {
-      delay: 0.5,
-      type: 'spring',
-      stiffness: 400,
-      damping: 40,
-    },
-  },
-}
-
 const Example = () => {
   const [isOpen, toggleOpen] = useCycle(false, true)
   const containerRef = useRef(null)
@@ -35,7 +15,28 @@ const Example = () => {
         custom={height}
         ref={containerRef}
       >
-        <motion.div className="background" variants={sidebar} />
+        <motion.div
+          className="background"
+          variants={{
+            open: (height = 1000) => ({
+              clipPath: `circle(${height * 2 + 200}px at 40px 40px)`,
+              transition: {
+                type: 'spring',
+                stiffness: 20,
+                restDelta: 2,
+              },
+            }),
+            closed: {
+              clipPath: 'circle(30px at 40px 40px)',
+              transition: {
+                delay: 0.5,
+                type: 'spring',
+                stiffness: 400,
+                damping: 40,
+              },
+            },
+          }}
+        />
         <Navigation />
         <MenuToggle toggle={() => toggleOpen()} />
       </motion.nav>
@@ -45,38 +46,7 @@ const Example = () => {
 
 export default Example
 
-const variants = {
-  open: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      y: { stiffness: 1000, velocity: -100 },
-    },
-  },
-  closed: {
-    y: 50,
-    opacity: 0,
-    transition: {
-      y: { stiffness: 1000 },
-    },
-  },
-}
-
 const colors = ['#FF008C', '#D309E1', '#9C1AFF', '#7700FF', '#4400FF']
-
-export const MenuItem = ({ i }) => {
-  const style = { border: `2px solid ${colors[i]}` }
-  return (
-    <motion.li
-      variants={variants}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
-    >
-      <div className="icon-placeholder" style={style} />
-      <div className="text-placeholder" style={style} />
-    </motion.li>
-  )
-}
 
 const Path = (props) => (
   <motion.path
@@ -89,7 +59,7 @@ const Path = (props) => (
 )
 
 export const MenuToggle = ({ toggle }) => (
-  <button onClick={toggle}>
+  <button onClick={toggle} className="toggle-button">
     <svg width="23" height="23" viewBox="0 0 23 23">
       <Path
         variants={{
@@ -115,24 +85,48 @@ export const MenuToggle = ({ toggle }) => (
   </button>
 )
 
-const variants2 = {
-  open: {
-    transition: { staggerChildren: 0.07, delayChildren: 0.2 },
-  },
-  closed: {
-    transition: { staggerChildren: 0.05, staggerDirection: -1 },
-  },
-}
-
 export const Navigation = () => (
-  <motion.ul variants={variants2}>
-    {itemIds.map((i) => (
-      <MenuItem i={i} key={i} />
-    ))}
+  <motion.ul
+    variants={{
+      open: {
+        transition: { staggerChildren: 0.07, delayChildren: 0.2 },
+      },
+      closed: {
+        transition: { staggerChildren: 0.05, staggerDirection: -1 },
+      },
+    }}
+  >
+    {[0, 1, 2, 3, 4].map((i) => {
+      const style = { border: `2px solid ${colors[i]}` }
+      return (
+        <motion.li
+          key={i}
+          variants={{
+            open: {
+              y: 0,
+              opacity: 1,
+              transition: {
+                y: { stiffness: 1000, velocity: -100 },
+              },
+            },
+            closed: {
+              y: 50,
+              opacity: 0,
+              transition: {
+                y: { stiffness: 1000 },
+              },
+            },
+          }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <div className="icon-placeholder" style={style} />
+          <div className="text-placeholder" style={style} />
+        </motion.li>
+      )
+    })}
   </motion.ul>
 )
-
-const itemIds = [0, 1, 2, 3, 4]
 
 // Naive implementation - in reality would want to attach
 // a window or resize listener. Also use state/layoutEffect instead of ref/effect
